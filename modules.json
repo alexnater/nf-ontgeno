@@ -82,7 +82,7 @@
                     },
                     "nanoplot": {
                         "branch": "master",
-                        "git_sha": "0e9cb409c32d3ec4f0d3804588e4778971c09b7e",
+                        "git_sha": "9322f997f94451510f974e417ec5277869030b44",
                         "installed_by": ["modules"]
                     },
                     "samtools/flagstat": {
