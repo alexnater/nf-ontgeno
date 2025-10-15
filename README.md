@@ -108,6 +108,7 @@ To run the pipeline, start an interactive session on the IBU cluster:
 ```bash
 srun --partition pibu_el8 --account p2024-0032 --cpus-per-task=1 --mem=8000 --time=144:00:00 --pty bash
 module load Java
+export APPTAINER_CACHEDIR=$SCRATCH
 export NXF_SINGULARITY_CACHEDIR=/data/projects/p2024-0032_comprehensive_cftr_gene_sequencing_using_long_read_nanopore_technology/pipelines/singularity_cache
 export NXF_TEMP=$SCRATCH
 ```

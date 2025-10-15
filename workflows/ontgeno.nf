@@ -67,16 +67,6 @@ workflow ONTGENO {
     )
     ch_versions = ch_versions.mix(CAT_CAT.out.versions.first())
 
-/*
-    ch_input.fq_dir
-        .map { meta, fastq_files ->
-            [ meta, 1..fastq_files.size(), fastq_files ]
-        }
-        .transpose()
-        .map { meta, rep, fastq -> [ meta + [id: "${meta.id}_${rep}"], fastq ] }
-        .set { ch_fastq_dir }
-*/
-
     //
     // SUBWORKFLOW: basecalling
     //

@@ -21,8 +21,8 @@ process WHATSHAP_PHASE {
 
     script:
     def args = task.ext.args ?: ''
-    def args2 = task.ext.args ?: ''
-    def args3 = task.ext.args ?: ''
+    def args2 = task.ext.args2 ?: ''
+    def args3 = task.ext.args3 ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     def convert_bcf = variants.extension == 'bcf' ? 1 : 0
 
