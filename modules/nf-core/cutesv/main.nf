@@ -26,7 +26,7 @@ process CUTESV {
     def variants = vcf ? "-Ivcf ${vcf}" : ''
 
     """
-    cuteSV \
+    cuteSV \\
         ${bam} \\
         ${fasta} \\
         ${prefix}.vcf \\
