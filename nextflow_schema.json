@@ -93,6 +93,12 @@
                     "description": "Basecalling model for Dorado.",
                     "enum": ["fast", "hac", "sup"]
                 },
+                "trimmer": {
+                    "type": "string",
+                    "description": "Tool to use for read trimming [fastp, fastplong, chopper].",
+                    "enum": ["fastp", "fastplong", "chopper"],
+                    "default": "fastplong"
+                },
                 "trim_length": {
                     "type": "integer",
                     "description": "Length in base pairs to trim from beginning and end of read.",
@@ -105,6 +111,13 @@
                     "description": "Minimum length of reads.",
                     "minimum": 0,
                     "default": 200
+                },
+                "min_qual": {
+                    "type": "integer",
+                    "description": "Minimum mean quality of reads.",
+                    "minimum": 0,
+                    "maximum": 40,
+                    "default": 0
                 },
                 "store_trimmed": {
                     "type": "boolean",

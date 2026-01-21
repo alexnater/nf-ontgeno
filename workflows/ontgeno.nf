@@ -4,10 +4,11 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { FASTQC                 } from '../modules/nf-core/fastqc'
 include { NANOPLOT               } from '../modules/nf-core/nanoplot'
 include { CAT_CAT                } from '../modules/nf-core/cat/cat'
-include { FASTP                  } from '../modules/nf-core/fastp'
+include { PREPROCESSING          } from '../subworkflows/local/preprocessing'
+include { QC                     } from '../subworkflows/local/qc'
+include { QC as QC_FILTERED      } from '../subworkflows/local/qc'
 include { MINIMAP2_ALIGN         } from '../modules/nf-core/minimap2/align'
 include { SAMTOOLS_VIEW          } from '../modules/nf-core/samtools/view'
 include { MULTIQC                } from '../modules/nf-core/multiqc'
@@ -79,39 +80,37 @@ workflow ONTGENO {
     ch_versions = ch_versions.mix(BASECALLING.out.versions)
 
     //
-    // MODULE: Run fastp
+    // SUBWORKFLOW: qc
     //
-    FASTP (
+    QC (
+        ch_fastq
+    )
+    ch_multiqc_files = ch_multiqc_files.mix(QC.out.fastqc.collect{it[1]})
+    ch_multiqc_files = ch_multiqc_files.mix(QC.out.nanoplot.collect{it[1]})
+    ch_versions = ch_versions.mix(QC.out.versions)
+
+    //
+    // SUBWORKFLOW: preprocessing
+    //
+    PREPROCESSING (
         ch_fastq,
-        [],
-        false,
-        false,
-        false
+        params.trimmer
     )
-    ch_versions = ch_versions.mix(FASTP.out.versions.first())
+    ch_multiqc_files = ch_multiqc_files.mix(PREPROCESSING.out.json.collect{it[1]})
+    ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
 
     //
-    // MODULE: Run FastQC
+    // SUBWORKFLOW: qc
     //
-    FASTQC (
-        FASTP.out.reads
+    QC_FILTERED (
+        PREPROCESSING.out.trimmed
     )
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
-    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
-
-    //
-    // MODULE: Run NanoPlot
-    //
-    NANOPLOT (
-        FASTP.out.reads
-    )
-    ch_multiqc_files = ch_multiqc_files.mix(NANOPLOT.out.txt.collect{it[1]})
-    ch_versions = ch_versions.mix(NANOPLOT.out.versions.first())
+    ch_versions = ch_versions.mix(QC_FILTERED.out.versions)
 
     //
     // MODULE: Run minimap2
     //
-    FASTP.out.reads
+    PREPROCESSING.out.trimmed
         .map { meta, fastq -> [ [id: meta.sample, sample: meta.sample, model: meta.model], fastq ] }
         .groupTuple()
         .set { ch_fastqs }
@@ -136,7 +135,7 @@ workflow ONTGENO {
     BAM_STATS (
         ch_mapped,
         ch_fasta_fai,
-        FASTP.out.json,
+        PREPROCESSING.out.json,
         bed_file
     )
     ch_versions = ch_versions.mix(BAM_STATS.out.versions)

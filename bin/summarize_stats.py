@@ -9,7 +9,7 @@ import re
 
 logger = logging.getLogger()
 
-DEPTH_TRHESHOLDS = (500, 200, 100)
+DEPTH_TRHESHOLDS = (100, 50, 10, 5, 1)
 HEADER = ("SampleID", "TotalReads", "TrimmedReads", "%Trimmed", "FilteredReads", "%Filtered", "MappedReads", "%Mapped", \
           "ProperlyPaired", "%ProperlyPaired", "Duplicates", "%Duplicates", "MeanDepth", "MinDepth", "MaxDepth") \
          + tuple(f"Coverage{depth}" for depth in reversed(DEPTH_TRHESHOLDS))
